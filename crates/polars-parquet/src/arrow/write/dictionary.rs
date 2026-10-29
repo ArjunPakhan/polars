@@ -396,14 +396,14 @@ fn serialize_keys<K: DictionaryKey>(
     value_lengths: Option<Arc<[u32]>>,
     options: WriteOptions,
 ) -> DynIter<'static, PolarsResult<Page>> {
-    let number_of_rows = nested[0].len();
-    let byte_size = estimated_bytes_size(array.keys());
+    let _number_of_rows = nested[0].len();
+    let _byte_size = estimated_bytes_size(array.keys());
 
     let array = array.clone();
     let nested = nested.to_vec();
 
     let pages =
-        row_slice_ranges(number_of_rows, byte_size, options).map(move |(offset, length)| {
+        row_slice_ranges(array.keys(), &nested, options).into_iter().map(move |(offset, length)| {
             let mut sliced_array = array.clone();
             let mut sliced_nested = nested.clone();
             slice_parquet_array(&mut sliced_array, &mut sliced_nested, offset, length);
